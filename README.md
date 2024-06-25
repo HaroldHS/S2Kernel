@@ -6,12 +6,22 @@ S2Kernel (Small and Simple Kernel) is a kernel for specific use cases.
 * NASM
 * GCC
 * QEMU
+* GRUB
 
-> Note: If the kernel runs in WSL(Ubuntu) and use EFI for booting, run this command to build a successful build file `sudo apt install grub-common xorisso grub-pc-bin`
+> Note: If the kernel runs in WSL(Ubuntu) and use EFI for booting, run this command in order to build a successful build file `sudo apt install grub-common xorisso grub-pc-bin`.
 
 ### How to run
 
 ```bash
-make
-qemu-system-i386 ./build/S2Kernel.iso
+# 1. Build an ISO image
+make build_x86_iso
+
+# 2.a Run the ISO image
+qemu-system-i386 -cdrom ./build/S2Kernel.iso
+
+# 2.b Run the kernel via binary file
+qemu-system-i386 -kernel ./build/S2Kernel.bin
+
+# 3. Clean the project
+make clean
 ```

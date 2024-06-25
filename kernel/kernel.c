@@ -1,5 +1,6 @@
-void kernel_main(void);
+#include "vga/vga.h"
 
 void kernel_main(void) {
-	return;
+	vga_clear_screen();
+	vga_write_string("Hello World!", 13);
 }
