@@ -97,7 +97,7 @@ void vga_write_string(const char *data, uint64_t size) {
 
 // Additional method (as helper) for this module
 void new_line(void) {
-	if (row < vga_width - 1) {
+	if (row < vga_height - 1) {
 		row++;
 		column = 0;
 	} else {

@@ -25,3 +25,10 @@ qemu-system-i386 -kernel ./build/S2Kernel.bin
 # 3. Clean the project
 make clean
 ```
+
+### Features of S2Kernel
+- [ ] Context Switching
+- [ ] Interrupt
+- [ ] Inter-process Communication (IPC)
+- [ ] Memory Management
+- [ ] Process Scheduling

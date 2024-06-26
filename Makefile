@@ -9,6 +9,8 @@ SRC_DIR = src/x86
 RESULT_BOOT_DIR=result/boot
 
 # List of object files
+ASSEMBLY_SOURCE_FILES=$(shell find $(SRC_DIR) -name *.asm)
+ASSEMBLY_OBJECT_FILES=$(patsubst $(SRC_DIR)/%.asm, $(BUILD_DIR)/%.o, $(ASSEMBLY_SOURCE_FILES))
 KERNEL_SOURCE_FILES=$(shell find $(KERNEL_DIR) -name *.c)
 KERNEL_OBJECT_FILES=$(patsubst $(KERNEL_DIR)/%.c, $(BUILD_DIR)/%.o, $(KERNEL_SOURCE_FILES))
 
@@ -22,11 +24,11 @@ $(BUILD_DIR)/S2Kernel.iso : $(SRC_DIR)/$(RESULT_BOOT_DIR)/S2Kernel.bin
 $(SRC_DIR)/$(RESULT_BOOT_DIR)/S2Kernel.bin : $(BUILD_DIR)/S2Kernel.bin
 	cp $(BUILD_DIR)/S2Kernel.bin $(SRC_DIR)/$(RESULT_BOOT_DIR)/S2Kernel.bin
 # Generate binary image with linker
-$(BUILD_DIR)/S2Kernel.bin : $(SRC_DIR)/linker.ld $(BUILD_DIR)/boot.o $(KERNEL_OBJECT_FILES)
-	$(LINKER) -m elf_i386 -T $(SRC_DIR)/linker.ld -o $(BUILD_DIR)/S2Kernel.bin $(BUILD_DIR)/boot.o $(KERNEL_OBJECT_FILES)
+$(BUILD_DIR)/S2Kernel.bin : $(SRC_DIR)/linker.ld $(ASSEMBLY_OBJECT_FILES) $(KERNEL_OBJECT_FILES)
+	$(LINKER) -m elf_i386 -T $(SRC_DIR)/linker.ld -o $(BUILD_DIR)/S2Kernel.bin $(ASSEMBLY_OBJECT_FILES) $(KERNEL_OBJECT_FILES)
 # Generate object files
-$(BUILD_DIR)/boot.o : $(SRC_DIR)/boot.asm
-	$(ASM) -f elf32 $(SRC_DIR)/boot.asm -o $(BUILD_DIR)/boot.o
+$(ASSEMBLY_OBJECT_FILES) : $(SRC_DIR)/%.o : $(BUILD_DIR)/%.asm
+	mkdir -p $(dir $@) && $(ASM) -f elf32 $(patsubst $(BUILD_DIR)/%.o, $(SRC_DIR)/%.asm, $@) -o $@
 $(KERNEL_OBJECT_FILES): $(BUILD_DIR)/%.o : $(KERNEL_DIR)/%.c
 	mkdir -p $(dir $@) && $(GCC) -m32 -c $(patsubst $(BUILD_DIR)/%.o, $(KERNEL_DIR)/%.c, $@) -o $@
 
