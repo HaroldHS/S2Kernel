@@ -1,7 +1,11 @@
+# Programs
 ASM=nasm
 GCC=gcc
 LINKER=ld
 GRUB=grub-mkrescue
+
+# Flags for programs
+CFLAGS_32_BITS= -m32 -fno-builtin
 
 BUILD_DIR=build
 KERNEL_DIR=kernel
@@ -30,7 +34,7 @@ $(BUILD_DIR)/S2Kernel.bin : $(SRC_DIR)/linker.ld $(ASSEMBLY_OBJECT_FILES) $(KERN
 $(ASSEMBLY_OBJECT_FILES) : $(SRC_DIR)/%.o : $(BUILD_DIR)/%.asm
 	mkdir -p $(dir $@) && $(ASM) -f elf32 $(patsubst $(BUILD_DIR)/%.o, $(SRC_DIR)/%.asm, $@) -o $@
 $(KERNEL_OBJECT_FILES): $(BUILD_DIR)/%.o : $(KERNEL_DIR)/%.c
-	mkdir -p $(dir $@) && $(GCC) -m32 -c $(patsubst $(BUILD_DIR)/%.o, $(KERNEL_DIR)/%.c, $@) -o $@
+	mkdir -p $(dir $@) && $(GCC) $(CFLAGS_32_BITS) -c $(patsubst $(BUILD_DIR)/%.o, $(KERNEL_DIR)/%.c, $@) -o $@
 
 clean:
 	rm -rf ./build/*

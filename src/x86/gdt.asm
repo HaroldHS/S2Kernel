@@ -11,6 +11,13 @@ gdt_flush:
 	mov gs, ax      ; extra segment 3
 	mov ss, ax      ; stack segment
 	jmp 0x08:.flush ; for code segment
-
 .flush:
+	ret
+
+
+global tss_flush
+
+tss_flush:
+	mov ax, 0x28 ; tell that TSS inside GDT is located at sixth entry (Each entry is 8 bytes. So, 5*8 = 40 bytes)
+	ltr ax       ; load TSR (Task State Register)
 	ret
